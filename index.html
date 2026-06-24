@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0B0B12" />
+<meta name="description" content="DoAllJ — AI로 무엇이든 빠르게 만들고, 새로운 기술을 실험하고 공유하는 1인 메이커 스튜디오." />
+<title>DoAllJ — AI Maker Studio</title>
+<style>
+  :root {
+    --ground: #0B0B12;
+    --ground-2: #12121C;
+    --text: #ECEAF3;
+    --muted: #8E8AA6;
+    --faint: #5A566E;
+    --accent: #836CFF;
+    --line: #20202E;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+      "Malgun Gothic", "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--ground); color: var(--text);
+    font-family: var(--sans); -webkit-font-smoothing: antialiased; line-height: 1.5; overflow-x: hidden;
+  }
+  .bg { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(60% 50% at 22% 8%, rgba(131,108,255,0.16), transparent 70%),
+      radial-gradient(50% 45% at 92% 100%, rgba(131,108,255,0.08), transparent 70%);
+  }
+  .bg::after { content: ""; position: absolute; inset: 0;
+    background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, #000 35%, transparent 78%);
+    mask-image: radial-gradient(120% 90% at 50% 0%, #000 35%, transparent 78%);
+    opacity: 0.5;
+  }
+  .wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 26px 0 0; }
+  .mark { display: flex; align-items: center; gap: 11px; font-weight: 800; letter-spacing: -0.4px; font-size: 18px; }
+  .mark .dot { width: 26px; height: 26px; border-radius: 8px; background: linear-gradient(150deg, var(--accent), #B6A6FF);
+    display: grid; place-items: center; color: #0B0B12; font-weight: 900; font-size: 15px; box-shadow: 0 6px 18px -6px var(--accent); }
+  .top-link { font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.04em; color: var(--muted); text-decoration: none;
+    border: 1px solid var(--line); padding: 8px 13px; border-radius: 999px; transition: color .2s, border-color .2s; }
+  .top-link:hover { color: var(--text); border-color: var(--accent); }
+  .hero { padding: clamp(64px, 16vh, 150px) 0 clamp(60px, 12vh, 120px); }
+  .eyebrow { font-family: var(--mono); font-size: 13px; letter-spacing: 0.34em; text-transform: uppercase; color: var(--accent);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 30px; }
+  .eyebrow::before { content: ""; width: 30px; height: 1px; background: var(--accent); }
+  h1 { margin: 0; font-size: clamp(48px, 11vw, 132px); line-height: 0.94; letter-spacing: -0.045em; font-weight: 850; }
+  h1 .lead { display: block; color: var(--text); }
+  .verb-line { display: flex; align-items: baseline; gap: 0.12em; flex-wrap: wrap; }
+  .verb-box { position: relative; display: inline-block; min-height: 1em; }
+  .verb { color: var(--accent); display: inline-block; }
+  .caret { display: inline-block; width: 0.06em; height: 0.82em; background: var(--accent); margin-left: 0.06em;
+    transform: translateY(0.06em); animation: blink 1.05s steps(1) infinite; }
+  @keyframes blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+  .sub { margin: 38px 0 0; max-width: 30ch; font-size: clamp(17px, 2.1vw, 22px); color: var(--muted); line-height: 1.55; }
+  .sub b { color: var(--text); font-weight: 600; }
+  .signature { margin-top: 30px; font-family: var(--mono); font-size: 13px; color: var(--faint); letter-spacing: 0.04em; }
+  section { padding: clamp(56px, 11vh, 110px) 0; border-top: 1px solid var(--line); }
+  .kicker { font-family: var(--mono); font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--faint); margin-bottom: 26px; }
+  .manifesto p { margin: 0; font-size: clamp(22px, 3.4vw, 38px); line-height: 1.4; letter-spacing: -0.02em; font-weight: 450; max-width: 20ch; }
+  .manifesto p .hl { color: var(--accent); }
+  .manifesto .small { margin-top: 28px; font-size: clamp(15px, 1.7vw, 18px); color: var(--muted); font-weight: 400; max-width: 52ch; line-height: 1.65; letter-spacing: 0; }
+  .ethos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  .cell { background: var(--ground); padding: 30px 26px; }
+  .cell .tag { font-family: var(--mono); font-size: 12px; letter-spacing: 0.22em; color: var(--accent); }
+  .cell h3 { margin: 16px 0 9px; font-size: 23px; letter-spacing: -0.02em; font-weight: 750; }
+  .cell p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+  .tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+  .chip { font-family: var(--mono); font-size: 13px; color: var(--text); background: var(--ground-2); border: 1px solid var(--line);
+    padding: 9px 15px; border-radius: 999px; letter-spacing: 0.01em; }
+  .chip span { color: var(--accent); }
+  footer { border-top: 1px solid var(--line); padding: 40px 0 56px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  footer .copy { font-family: var(--mono); font-size: 12.5px; color: var(--faint); letter-spacing: 0.04em; }
+  .cta { display: inline-flex; align-items: center; gap: 9px; background: var(--accent); color: #0B0B12; font-weight: 750; font-size: 15px;
+    padding: 13px 22px; border-radius: 12px; text-decoration: none; box-shadow: 0 12px 30px -12px var(--accent); transition: transform .16s ease; }
+  .cta:hover { transform: translateY(-2px); }
+  a:focus-visible, .top-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  @media (max-width: 680px) { .ethos { grid-template-columns: 1fr; } .sub { max-width: none; } }
+  @media (prefers-reduced-motion: reduce) { .caret { animation: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"></div>
+<div class="wrap">
+  <header>
+    <div class="mark"><span class="dot">D</span> DoAllJ</div>
+    <a class="top-link" href="mailto:hello@doallj.com">hello@doallj.com ↗</a>
+  </header>
+  <main class="hero">
+    <div class="eyebrow">DoAllJ · AI Maker Studio</div>
+    <h1>
+      <span class="lead">무엇이든</span>
+      <span class="verb-line"><span class="verb-box"><span class="verb" id="verb">만든다</span></span><span class="caret" aria-hidden="true"></span></span>
+    </h1>
+    <p class="sub">AI를 도구 삼아 <b>빠르게 짓고</b>, 새로운 기술을 <b>실험하고</b>, 그 과정을 <b>공유하는</b> 1인 메이커 스튜디오.</p>
+    <div class="signature">다한다주익 · 多 한다 · est. 2025</div>
+  </main>
+</div>
+<section>
+  <div class="wrap manifesto">
+    <div class="kicker">What this is</div>
+    <p>아이디어가 떠오르면, 주말이 가기 전에 <span class="hl">돌아가는 서비스</span>가 됩니다.</p>
+    <p class="small">DoAllJ는 한 사람이 AI와 함께 무엇이든 만들어보는 실험실입니다. 도메인을 사고, 디자인을 잡고, 백엔드를 올리고, 배포까지 — 만들고 싶은 건 일단 만듭니다. 쓸 만한 건 세상에 내놓고, 새로 배운 기술은 기록으로 남깁니다.</p>
+  </div>
+</section>
+<section>
+  <div class="wrap">
+    <div class="kicker">How it works</div>
+    <div class="ethos">
+      <div class="cell"><div class="tag">BUILD</div><h3>빠르게 만든다</h3><p>기획서보다 프로토타입. 생각은 돌아가는 화면으로 증명합니다.</p></div>
+      <div class="cell"><div class="tag">EXPERIMENT</div><h3>실험한다</h3><p>새 모델, 새 도구, 새 패턴. 재미있어 보이면 일단 붙여봅니다.</p></div>
+      <div class="cell"><div class="tag">SHARE</div><h3>공유한다</h3><p>배운 기술과 만든 것들을 기록하고 나눕니다.</p></div>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="wrap">
+    <div class="kicker">요즘 다루는 것</div>
+    <div class="tags">
+      <span class="chip"><span>›</span> LLM 에이전트</span>
+      <span class="chip"><span>›</span> Claude Code</span>
+      <span class="chip"><span>›</span> 서버리스 (Lambda)</span>
+      <span class="chip"><span>›</span> 반응형 웹</span>
+      <span class="chip"><span>›</span> 자동 배포 (CI/CD)</span>
+      <span class="chip"><span>›</span> 인증 · 결제</span>
+      <span class="chip"><span>›</span> 지도 · 데이터</span>
+    </div>
+  </div>
+</section>
+<div class="wrap">
+  <footer>
+    <span class="copy">© 2025 DoAllJ · 다한다주익</span>
+    <a class="cta" href="mailto:hello@doallj.com">같이 만들어요 →</a>
+  </footer>
+</div>
+<script>
+  (function () {
+    var verbs = ["만든다", "짓는다", "실험한다", "자동화한다", "연결한다", "출시한다", "부수고 다시 만든다"];
+    var el = document.getElementById("verb");
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!el || reduce) return;
+    var i = 0;
+    el.style.transition = "opacity .28s ease, transform .28s ease";
+    setInterval(function () {
+      el.style.opacity = "0";
+      el.style.transform = "translateY(-0.18em)";
+      setTimeout(function () {
+        i = (i + 1) % verbs.length;
+        el.textContent = verbs[i];
+        el.style.transform = "translateY(0.18em)";
+        void el.offsetWidth;
+        el.style.opacity = "1";
+        el.style.transform = "translateY(0)";
+      }, 300);
+    }, 2100);
+  })();
+</script>
+</body>
+</html>
